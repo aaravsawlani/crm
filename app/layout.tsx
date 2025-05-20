@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "@/styles/globals.css";
-import Sidebar from "@/components/sidebar"; // Assuming components alias is set to @/components
+import { DM_Sans } from "next/font/google";
+import "./globals.css";
+import { AppSidebar } from "@/components/app-sidebar";
 import { ReactNode } from "react";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
-const inter = Inter({ subsets: ["latin"] });
+const dmSans = DM_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Car Wash CRM",
@@ -17,10 +18,18 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} flex h-screen overflow-hidden`}>
-        <Sidebar />
-        <main className="flex-1 overflow-y-auto p-8">{children}</main>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${dmSans.className} flex h-screen overflow-hidden`}>
+        <SidebarProvider>
+          <AppSidebar />
+          <SidebarInset className="flex-1 overflow-y-auto">
+            <main className="min-h-screen w-full">
+              <div className="relative w-full p-8 transition-all duration-200 ease-in-out peer-data-[state=expanded]:ml-[19rem] peer-data-[state=collapsed]:ml-[6rem]">
+                {children}
+              </div>
+            </main>
+          </SidebarInset>
+        </SidebarProvider>
       </body>
     </html>
   );

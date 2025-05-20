@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Accordion,
   AccordionContent,
@@ -13,10 +15,17 @@ import {
   Mail,
   Send,
   Inbox,
+  History,
+  Workflow,
+  ListTodo,
+  FileText,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const Sidebar = () => {
+  const router = useRouter();
+
   const handleKeyDown = (event: React.KeyboardEvent, path: string) => {
     if (event.key === "Enter" || event.key === " ") {
       // Navigate on Enter or Space key press
@@ -87,14 +96,29 @@ const Sidebar = () => {
               </span>
             </AccordionTrigger>
             <AccordionContent className="pl-6 flex flex-col space-y-1">
-              <Button variant="ghost" className="w-full justify-start h-8 text-sm">
-                View Flows
-              </Button>
-              <Button variant="ghost" className="w-full justify-start h-8 text-sm">
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => router.push("/flows/create")}
+              >
+                <Workflow className="mr-2 h-4 w-4" />
                 Create Flow
               </Button>
-              <Button variant="ghost" className="w-full justify-start h-8 text-sm">
-                Templates
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => router.push("/flows/view")}
+              >
+                <ListTodo className="mr-2 h-4 w-4" />
+                View Flows
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => router.push("/flows/templates")}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Flow Templates
               </Button>
             </AccordionContent>
           </AccordionItem>
@@ -107,11 +131,21 @@ const Sidebar = () => {
               </span>
             </AccordionTrigger>
             <AccordionContent className="pl-6 flex flex-col space-y-1">
-              <Button variant="ghost" className="w-full justify-start h-8 text-sm">
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => router.push("/blast/send")}
+              >
+                <Send className="mr-2 h-4 w-4" />
                 Send Blast
               </Button>
-              <Button variant="ghost" className="w-full justify-start h-8 text-sm">
-                History
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => router.push("/blast/history")}
+              >
+                <History className="mr-2 h-4 w-4" />
+                Blast History
               </Button>
             </AccordionContent>
           </AccordionItem>
@@ -124,11 +158,13 @@ const Sidebar = () => {
               </span>
             </AccordionTrigger>
             <AccordionContent className="pl-6 flex flex-col space-y-1">
-              <Button variant="ghost" className="w-full justify-start h-8 text-sm">
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => router.push("/inbox/view")}
+              >
+                <Inbox className="mr-2 h-4 w-4" />
                 View Inbox
-              </Button>
-              <Button variant="ghost" className="w-full justify-start h-8 text-sm">
-                Settings
               </Button>
             </AccordionContent>
           </AccordionItem>
