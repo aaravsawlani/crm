@@ -25,7 +25,6 @@ import {
   Save,
   Info,
   ArrowLeft,
-  DollarSign,
   Clock,
   Repeat,
   Star,
@@ -41,6 +40,14 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 // Common operators
 const commonOperators = {
@@ -79,162 +86,96 @@ type FilterSections = {
 };
 
 const filterSections: FilterSections = {
-  Members: {
-    "Membership average visits": {
+  General: {
+    "Average visits": {
       type: "number",
       operators: Object.values(commonOperators),
-      unit: "visits per month",
+      unit: "visits per month", 
     },
-    "Membership cancellation": {
+    "Recent visits": {
       type: "compound",
+      operators: Object.values(commonOperators),
+    },
+    "Total visits": {
+      type: "number", 
+      operators: Object.values(commonOperators),
+    },
+    "Last wash date": {
+      type: "number",
+      operators: ["is within last", "is not within last"],
+      unit: "days",
+    },
+    "First visit": {
+      type: "number",
+      operators: ["is within last", "is not within last"],
+      unit: "days",
+    },
+    "Is a member": {
+      type: "boolean",
+      operators: ["is"],
+    },
+  },
+  Membership: {
+    "Membership join date": {
+      type: "number", 
+      operators: ["is within last", "is not within last"],
+      unit: "days",
+    },
+    "Membership plan name": {
+      type: "multiselect",
       operators: ["is", "is not"],
-      fields: {
-        reason: ["Service", "Price", "Usage", "Moving", "Other"],
-        timeframe: {
-          type: "timeframe",
-          units: ["days", "weeks", "months", "years"],
-        },
-      },
+      options: [
+        "Unl Taxi Basic",
+        "Unl Taxi Carnauba", 
+        "Unl Taxi Graphene",
+        "Unl Taxi Super",
+        "Unlimited Basic",
+        "Unlimited Carnauba",
+        "Unlimited Graphene",
+        "Unlimited Super"
+      ],
     },
-    "Membership downsell accepted date": {
-      type: "date",
-      operators: Object.values(timeOperators),
+    "Membership status": {
+      type: "multiselect",
+      operators: ["is", "is not"],
+      options: [
+        "Plan Used",
+        "Joined", 
+        "Transfer In",
+        "Renewed",
+        "Resumed",
+        "Discontinuing",
+        "Plan Expired",
+        "Discontinued",
+        "Terminated",
+        "Transfer Out",
+        "Suspended",
+        "Card Expired",
+        "Card Declined",
+        "Recharge Problem",
+        "Enter/Swipe New Credit Card",
+        "New Card is Approved",
+        "Credit Card Changed",
+        "Join Date Changed"
+      ],
     },
-    "Membership downsell declined date": {
-      type: "date",
-      operators: Object.values(timeOperators),
+    "Membership last charge date": {
+      type: "number",
+      operators: ["is within last", "is not within last"],
+      unit: "days",
     },
     "Membership failed recharge attempts": {
       type: "number",
       operators: Object.values(commonOperators),
+      unit: "last 30 days",
     },
-    "Membership involuntary churn": {
-      type: "date",
-      operators: Object.values(timeOperators),
-    },
-    "Membership join date": {
-      type: "date",
-      operators: Object.values(timeOperators),
-    },
-    "Membership last charge date": {
-      type: "date",
-      operators: Object.values(timeOperators),
-    },
-    "Membership last wash date": {
-      type: "date",
-      operators: Object.values(timeOperators),
-    },
-    "Membership location": {
-      type: "multiselect",
-      operators: ["is one of", "is not one of"],
-      options: [], // These would be dynamically loaded
-    },
-    "Membership next charge date": {
-      type: "date",
-      operators: Object.values(timeOperators),
-    },
-    "Membership plan name": {
-      type: "text",
-      operators: ["is", "is not", "contains", "does not contain"],
-    },
-    "Membership plan price": {
+    "Membership cancellation date": {
       type: "number",
-      operators: Object.values(commonOperators),
-      prefix: "$",
-    },
-    "Membership plan type": {
-      type: "multiselect",
-      operators: ["is one of", "is not one of"],
-      options: [], // These would be dynamically loaded
-    },
-    "Membership recent visits": {
-      type: "number",
-      operators: Object.values(commonOperators),
-      suffix: "visits in the last 30 days",
-    },
-    "Membership replication group": {
-      type: "multiselect",
-      operators: ["is one of", "is not one of"],
-      options: [], // These would be dynamically loaded
-    },
-    "Membership status": {
-      type: "select",
-      operators: ["is", "is not"],
-      options: ["Active", "Former", "Never members"],
-    },
-    "Membership total visits": {
-      type: "number",
-      operators: Object.values(commonOperators),
-    },
-    "Membership voluntary churn": {
-      type: "date",
-      operators: Object.values(timeOperators),
-    },
-    "Membership whitelist": {
-      type: "multiselect",
-      operators: ["is one of", "is not one of"],
-      options: [], // These would be dynamically loaded
+      operators: ["is within last", "is not within last"],
+      unit: "days",
     },
   },
-  Contacts: {
-    "Contact birth date": {
-      type: "date",
-      operators: Object.values(timeOperators),
-    },
-    "Contact created": {
-      type: "date",
-      operators: Object.values(timeOperators),
-    },
-    "Contact list": {
-      type: "multiselect",
-      operators: ["is one of", "is not one of"],
-      options: [], // These would be dynamically loaded
-    },
-    "Contact location": {
-      type: "multiselect",
-      operators: ["is one of", "is not one of"],
-      options: [], // These would be dynamically loaded
-    },
-  },
-  "Retail Wash": {
-    "Last retail wash": {
-      type: "date",
-      operators: Object.values(timeOperators),
-    },
-    "Retail wash count": {
-      type: "number",
-      operators: Object.values(commonOperators),
-    },
-    "Retail segment": {
-      type: "multiselect",
-      operators: ["is one of", "is not one of"],
-      options: ["Bargain Hunters", "Early Birds", "Weekend Warriors"],
-    },
-  },
-  Other: {
-    "Redeemed voucher": {
-      type: "compound",
-      operators: ["is", "is not"],
-      fields: {
-        type: [], // These would be dynamically loaded
-        timeframe: {
-          type: "timeframe",
-          units: ["days", "weeks", "months"],
-        },
-      },
-    },
-    "Unredeemed voucher": {
-      type: "compound",
-      operators: ["is", "is not"],
-      fields: {
-        type: [], // These would be dynamically loaded
-        timeframe: {
-          type: "timeframe",
-          units: ["days", "weeks", "months"],
-        },
-      },
-    },
-  },
+
 };
 
 type Filter = {
@@ -269,12 +210,28 @@ const FilterRow = ({
   };
 
   const filterConfig = findFilterConfig();
-  const [valueType, setValueType] = React.useState<"text" | "number" | "date" | "boolean">("text");
+  const inputType = filterConfig?.type;
 
   const renderValueInput = () => {
     if (!filterConfig) return null;
 
-    switch (valueType) {
+    // If this is a relative date operator (within last) we expect a numeric input even though base type is date
+    const relativeDate =
+      inputType === "date" && filter.operator === "is within last";
+
+    if (relativeDate) {
+      return (
+        <Input
+          type="number"
+          value={filter.value}
+          onChange={(e) => onUpdate({ ...filter, value: e.target.value })}
+          className="w-[100px]"
+          placeholder="Days"
+        />
+      );
+    }
+
+    switch (inputType) {
       case "date":
         return (
           <Input
@@ -303,6 +260,56 @@ const FilterRow = ({
           </div>
         );
 
+      case "compound":
+        if (filter.property === "Recent visits") {
+          return (
+            <div className="flex items-center gap-2 text-sm">
+              <Input
+                type="number"
+                value={filter.value?.count || ""}
+                onChange={(e) => onUpdate({ 
+                  ...filter, 
+                  value: { ...filter.value, count: e.target.value }
+                })}
+                className="w-[80px]"
+                placeholder="0"
+              />
+              <span className="text-muted-foreground">within last</span>
+              <Input
+                type="number"
+                value={filter.value?.days || ""}
+                onChange={(e) => onUpdate({ 
+                  ...filter, 
+                  value: { ...filter.value, days: e.target.value }
+                })}
+                className="w-[80px]"
+                placeholder="0"
+              />
+              <span className="text-muted-foreground">days</span>
+            </div>
+          );
+        }
+        return null;
+
+      case "select":
+        return (
+          <Select
+            value={filter.value}
+            onValueChange={(value) => onUpdate({ ...filter, value })}
+          >
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Select..." />
+            </SelectTrigger>
+            <SelectContent>
+              {filterConfig.options?.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        );
+
       case "boolean":
         return (
           <Select
@@ -319,6 +326,61 @@ const FilterRow = ({
           </Select>
         );
 
+      case "multiselect":
+        const selectedValues = Array.isArray(filter.value) ? filter.value : (filter.value ? [filter.value] : []);
+        return (
+          <div className="w-[300px]">
+            <Select
+              onValueChange={(value) => {
+                const currentValues = Array.isArray(filter.value) ? filter.value : [];
+                const newValues = currentValues.includes(value)
+                  ? currentValues.filter(v => v !== value)
+                  : [...currentValues, value];
+                onUpdate({ ...filter, value: newValues });
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={selectedValues.length > 0 ? `${selectedValues.length} selected` : "Select options..."} />
+              </SelectTrigger>
+              <SelectContent>
+                {filterConfig.options?.map((option) => (
+                  <SelectItem 
+                    key={option} 
+                    value={option}
+                    className={selectedValues.includes(option) ? "bg-accent" : ""}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className={`w-4 h-4 border rounded ${selectedValues.includes(option) ? 'bg-primary border-primary' : 'border-input'}`}>
+                        {selectedValues.includes(option) && <div className="w-2 h-2 bg-white rounded-sm m-auto" />}
+                      </div>
+                      {option}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {selectedValues.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-2">
+                {selectedValues.map((value) => (
+                  <Badge key={value} variant="secondary" className="text-xs">
+                    {value}
+                    <button
+                      onClick={() => {
+                        const newValues = selectedValues.filter(v => v !== value);
+                        onUpdate({ ...filter, value: newValues });
+                      }}
+                      className="ml-1 text-xs hover:text-destructive"
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+
+      case "text":
       default:
         return (
           <Input
@@ -331,7 +393,7 @@ const FilterRow = ({
   };
 
   return (
-    <div className="flex items-center gap-2 p-2 bg-background border rounded-md">
+    <div className="flex items-center gap-2 p-3 bg-muted/20 border rounded-md">
       <Select
         value={filter.property}
         onValueChange={(property) => onUpdate({ ...filter, property })}
@@ -373,23 +435,6 @@ const FilterRow = ({
         </Select>
       )}
 
-      {filterConfig && (
-        <Select
-          value={valueType}
-          onValueChange={(type) => setValueType(type as "text" | "number" | "date" | "boolean")}
-        >
-          <SelectTrigger className="w-[120px]">
-            <SelectValue placeholder="Value type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="text">Text</SelectItem>
-            <SelectItem value="number">Number</SelectItem>
-            <SelectItem value="date">Date</SelectItem>
-            <SelectItem value="boolean">True/False</SelectItem>
-          </SelectContent>
-        </Select>
-      )}
-
       {renderValueInput()}
 
       <TooltipProvider>
@@ -411,356 +456,6 @@ const FilterRow = ({
   );
 };
 
-// Segment presets organized by category
-const segmentPresets = {
-  "Spend Habit": [
-    {
-      name: "Price Conscious Washer",
-      description: "Someone whose average spend in the trailing 6 months is less than or equal to the 25th percentile",
-      filters: [
-        {
-          property: "Average spend trailing 6 months",
-          operator: "is less than or equal to",
-          value: "25",
-          valueType: "number",
-          unit: "percentile"
-        },
-        {
-          property: "Last visit date",
-          operator: "is within last",
-          value: "6",
-          valueType: "number",
-          unit: "months"
-        }
-      ]
-    },
-    {
-      name: "Splurge Washer",
-      description: "Someone whose average spend in the trailing 6 months is greater than or equal to the 75th percentile",
-      filters: [
-        {
-          property: "Average spend trailing 6 months",
-          operator: "is greater than or equal to",
-          value: "75",
-          valueType: "number",
-          unit: "percentile"
-        },
-        {
-          property: "Last visit date",
-          operator: "is within last",
-          value: "6",
-          valueType: "number",
-          unit: "months"
-        }
-      ]
-    },
-    {
-      name: "Spending Surge",
-      description: "Someone whose average spend over the last 6 months has increased by $5 or more compared to previous 6 months",
-      filters: [
-        {
-          property: "Spend increase last 6 months",
-          operator: "is greater than or equal to",
-          value: "5",
-          valueType: "number",
-          unit: "dollars"
-        }
-      ]
-    }
-  ],
-  "Time Habit": [
-    {
-      name: "Weekend Washer",
-      description: "Someone who washes on weekends 75% of the time or more",
-      filters: [
-        {
-          property: "Weekend wash percentage",
-          operator: "is greater than or equal to",
-          value: "75",
-          valueType: "number",
-          unit: "percent"
-        }
-      ]
-    },
-    {
-      name: "Weekday Washer",
-      description: "Someone who washes on weekdays 75% of the time or more",
-      filters: [
-        {
-          property: "Weekday wash percentage",
-          operator: "is greater than or equal to",
-          value: "75",
-          valueType: "number",
-          unit: "percent"
-        }
-      ]
-    },
-    {
-      name: "Early Bird",
-      description: "Someone who washes between 5am to 12pm at least 75% of the time",
-      filters: [
-        {
-          property: "Morning wash percentage",
-          operator: "is greater than or equal to",
-          value: "75",
-          valueType: "number",
-          unit: "percent"
-        }
-      ]
-    },
-    {
-      name: "Night Owl",
-      description: "Someone who washes between 6pm and midnight at least 75% of the time",
-      filters: [
-        {
-          property: "Evening wash percentage",
-          operator: "is greater than or equal to",
-          value: "75",
-          valueType: "number",
-          unit: "percent"
-        }
-      ]
-    }
-  ],
-  "Frequency Habit": [
-    {
-      name: "Dormant Washer",
-      description: "Someone who has not visited in the last 6 months",
-      filters: [
-        {
-          property: "Last visit date",
-          operator: "is before",
-          value: "6",
-          valueType: "number",
-          unit: "months ago"
-        }
-      ]
-    },
-    {
-      name: "Recent Wash Enthusiast",
-      description: "Someone who has visited 3 or more times in the last month",
-      filters: [
-        {
-          property: "Visit count last month",
-          operator: "is greater than or equal to",
-          value: "3",
-          valueType: "number"
-        }
-      ]
-    },
-    {
-      name: "New Retail Customer",
-      description: "First retail wash within the last 2 months",
-      filters: [
-        {
-          property: "First visit date",
-          operator: "is within last",
-          value: "2",
-          valueType: "number",
-          unit: "months"
-        }
-      ]
-    },
-    {
-      name: "Monthly Visitor",
-      description: "Purchased retail wash in at least 10 of last 12 months",
-      filters: [
-        {
-          property: "Active months count",
-          operator: "is greater than or equal to",
-          value: "10",
-          valueType: "number",
-          unit: "months"
-        }
-      ]
-    },
-    {
-      name: "Above Average Washer",
-      description: "Washes more than average over last 6 months",
-      filters: [
-        {
-          property: "Wash frequency percentile",
-          operator: "is greater than",
-          value: "50",
-          valueType: "number",
-          unit: "percentile"
-        }
-      ]
-    },
-    {
-      name: "Below Average Washer",
-      description: "Washes less than average over last 6 months",
-      filters: [
-        {
-          property: "Wash frequency percentile",
-          operator: "is less than",
-          value: "50",
-          valueType: "number",
-          unit: "percentile"
-        }
-      ]
-    },
-    {
-      name: "Bronze Tier Washer",
-      description: "Wash count in top 25% over last 6 months",
-      filters: [
-        {
-          property: "Wash count percentile",
-          operator: "is greater than",
-          value: "75",
-          valueType: "number",
-          unit: "percentile"
-        }
-      ]
-    },
-    {
-      name: "Silver Tier Washer",
-      description: "Wash count in top 10% over last 6 months",
-      filters: [
-        {
-          property: "Wash count percentile",
-          operator: "is greater than",
-          value: "90",
-          valueType: "number",
-          unit: "percentile"
-        }
-      ]
-    },
-    {
-      name: "Gold Tier Washer",
-      description: "Wash count in top 1% over last 6 months",
-      filters: [
-        {
-          property: "Wash count percentile",
-          operator: "is greater than",
-          value: "99",
-          valueType: "number",
-          unit: "percentile"
-        }
-      ]
-    }
-  ],
-  "Other Behavior": [
-    {
-      name: "Cash King",
-      description: "Paid with cash at least 50% of time in last 6 months",
-      filters: [
-        {
-          property: "Cash payment percentage",
-          operator: "is greater than or equal to",
-          value: "50",
-          valueType: "number",
-          unit: "percent"
-        }
-      ]
-    },
-    {
-      name: "Loyalty Participant",
-      description: "Received text messages as part of Loyalty Program",
-      filters: [
-        {
-          property: "Loyalty program status",
-          operator: "is",
-          value: "true",
-          valueType: "boolean"
-        }
-      ]
-    },
-    {
-      name: "Recent Former Member",
-      description: "Had membership within last 3 months, now retail customer",
-      filters: [
-        {
-          property: "Former member status",
-          operator: "is",
-          value: "true",
-          valueType: "boolean"
-        },
-        {
-          property: "Last membership date",
-          operator: "is within last",
-          value: "3",
-          valueType: "number",
-          unit: "months"
-        }
-      ]
-    }
-  ]
-};
-
-const PresetCard = ({ 
-  preset, 
-  onSelect 
-}: { 
-  preset: { name: string; description: string; filters: any[] };
-  onSelect: () => void;
-}) => (
-  <Card className="cursor-pointer hover:bg-accent/50" onClick={onSelect}>
-    <CardContent className="p-4">
-      <h3 className="font-medium">{preset.name}</h3>
-      <p className="text-sm text-muted-foreground mt-1">{preset.description}</p>
-      <div className="mt-3 space-y-1">
-        {preset.filters.map((filter, index) => (
-          <div key={index} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <Badge variant="secondary" className="font-normal text-xs">
-              {filter.property}
-            </Badge>
-            <span>{filter.operator}</span>
-            <Badge variant="outline" className="font-normal text-xs">
-              {filter.value} {filter.unit}
-            </Badge>
-          </div>
-        ))}
-      </div>
-    </CardContent>
-  </Card>
-);
-
-const PresetsSection = ({ onSelectPreset }: { onSelectPreset: (filters: any[]) => void }) => {
-  const categoryIcons = {
-    "Spend Habit": <DollarSign className="h-4 w-4" />,
-    "Time Habit": <Clock className="h-4 w-4" />,
-    "Frequency Habit": <Repeat className="h-4 w-4" />,
-    "Other Behavior": <Star className="h-4 w-4" />
-  };
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-lg font-medium">Segment Presets</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Accordion type="single" collapsible className="w-full">
-          {Object.entries(segmentPresets).map(([category, presets]) => (
-            <AccordionItem key={category} value={category}>
-              <AccordionTrigger className="hover:no-underline">
-                <div className="flex items-center gap-2">
-                  {categoryIcons[category as keyof typeof categoryIcons]}
-                  <span>{category}</span>
-                  <Badge variant="secondary" className="ml-2">
-                    {presets.length}
-                  </Badge>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="grid gap-4 pt-3">
-                  {presets.map((preset) => (
-                    <PresetCard
-                      key={preset.name}
-                      preset={preset}
-                      onSelect={() => onSelectPreset(preset.filters)}
-                    />
-                  ))}
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </CardContent>
-    </Card>
-  );
-};
-
 export default function CreateSegmentPage() {
   const form = useForm({
     defaultValues: {
@@ -772,11 +467,39 @@ export default function CreateSegmentPage() {
   const [filters, setFilters] = React.useState<Filter[]>([]);
   const [excludedAudiences, setExcludedAudiences] = React.useState<string[]>([]);
 
-  const handleSelectPreset = (presetFilters: any[]) => {
-    setFilters(presetFilters.map(filter => ({
-      id: Math.random().toString(36).substr(2, 9),
-      ...filter
-    })));
+  // ODBC test state and handler
+  const [odbcOutput, setOdbcOutput] = React.useState<string | null>(null);
+  const [runningOdbc, setRunningOdbc] = React.useState(false);
+  const [odbcRows, setOdbcRows] = React.useState<any[]>([]);
+  const [page, setPage] = React.useState(1);
+  const pageSize = 50;
+
+  const runOdbcTest = async () => {
+    setRunningOdbc(true);
+    setOdbcOutput(null);
+    setOdbcRows([]);
+    try {
+      const res = await fetch("/api/segmentation/odbc");
+      const data = await res.json();
+      if (data.success) {
+        if (Array.isArray(data.rows)) {
+          setOdbcRows(data.rows);
+          if (data.rows.length === 0) {
+            setOdbcOutput(data.info ?? "Query returned 0 rows.");
+          }
+        } else {
+          const text = [data.stdout, data.stderr].filter(Boolean).join("\n").trim();
+          setOdbcOutput(text || data.info || "No output returned.");
+        }
+        setPage(1);
+      } else {
+        setOdbcOutput(data.error ?? "Unknown error.");
+      }
+    } catch (err: any) {
+      setOdbcOutput(err?.message ?? String(err));
+    } finally {
+      setRunningOdbc(false);
+    }
   };
 
   const handleAddFilter = () => {
@@ -800,28 +523,82 @@ export default function CreateSegmentPage() {
     );
   };
 
-  const handleSaveSegment = () => {
+  const handleSaveSegment = async () => {
     const formData = form.getValues();
-    console.log("Saving segment:", {
-      name: formData.name,
-      filters,
-      excludedAudiences,
+    
+    // Validation
+    if (!formData.name || !formData.name.trim()) {
+      alert("Please enter a segment name");
+      return;
+    }
+    
+    if (filters.length === 0) {
+      alert("Please add at least one filter");
+      return;
+    }
+    
+    try {
+      const response = await fetch("/api/segments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          filters,
+          excludedAudiences,
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        alert("Segment saved successfully!");
+        // Reset form
+        form.reset();
+        setFilters([]);
+        setExcludedAudiences([]);
+        // Optionally redirect to view page
+        // window.location.href = "/segmentation/view";
+      } else {
+        alert(`Error saving segment: ${data.error}`);
+      }
+    } catch (error: any) {
+      console.error("Error saving segment:", error);
+      alert(`Error saving segment: ${error.message}`);
+    }
+  };
+
+  const handlePreview = async () => {
+    const res = await fetch("/api/segmentation/preview", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ filters }),
     });
+    const data = await res.json();
+    if (data.success) {
+      setOdbcRows(data.rows);
+      setOdbcOutput(null);
+      setPage(1);
+    } else {
+      setOdbcRows([]);
+      setOdbcOutput(data.error ?? "Unknown error");
+      setPage(1);
+    }
   };
 
   return (
     <div className="space-y-6 p-6">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon">
-          <ArrowLeft className="h-4 w-4" />
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-semibold">New Audience</h1>
+
+        <Button variant="outline" onClick={runOdbcTest} disabled={runningOdbc}>
+          {runningOdbc ? "Running ODBC Test..." : "Run ODBC Test"}
         </Button>
-        <h1 className="text-2xl font-semibold">New Audience</h1>
       </div>
 
       <Form {...form}>
         <div className="space-y-6">
-          <PresetsSection onSelectPreset={handleSelectPreset} />
-
           <Card>
             <CardContent className="pt-6">
               <FormField
@@ -898,7 +675,12 @@ export default function CreateSegmentPage() {
           </Card>
 
           <div className="flex justify-between">
-            <Button variant="outline">Preview Audience</Button>
+            <Button variant="outline" onClick={handlePreview}>Preview Audience</Button>
+            {odbcRows.length > 0 && (
+              <div className="flex items-center text-sm text-muted-foreground">
+                <span className="font-medium">{odbcRows.length} members</span>
+              </div>
+            )}
             <Button onClick={handleSaveSegment}>
               <Save className="h-4 w-4 mr-2" />
               Save Audience
@@ -906,6 +688,87 @@ export default function CreateSegmentPage() {
           </div>
         </div>
       </Form>
+
+      {(odbcRows.length > 0 || odbcOutput) && (
+        <Card>
+          <CardHeader>
+            <CardTitle>ODBC Test Output</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {odbcRows.length > 0 ? (
+              <ScrollArea className="h-[400px] w-full overflow-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      {[
+                        "LASTCUSTCODE",
+                        "FIRSTNAME",
+                        "LASTNAME",
+                        "MAINPHONE",
+                        "EMAIL",
+                        "ADDRESS1",
+                        "CITY",
+                        "STATE",
+                        "ZIPCODE",
+                      ].map((col) => (
+                        <TableHead key={col}>{col}</TableHead>
+                      ))}
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {odbcRows.slice((page-1)*pageSize, page*pageSize).map((row, idx) => (
+                      <TableRow key={idx}>
+                        {[
+                          "LASTCUSTCODE",
+                          "FIRSTNAME",
+                          "LASTNAME",
+                          "MAINPHONE",
+                          "EMAIL",
+                          "ADDRESS1",
+                          "CITY",
+                          "STATE",
+                          "ZIPCODE",
+                        ].map((col) => (
+                          <TableCell key={col}>{row[col] ?? ""}</TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </ScrollArea>
+            ) : (
+              <pre className="text-sm whitespace-pre-wrap">{odbcOutput}</pre>
+            )}
+            {odbcRows.length > pageSize && (
+              <div className="flex items-center justify-between mt-2 text-sm">
+                <span>
+                  Page {page} of {Math.ceil(odbcRows.length / pageSize)}
+                </span>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={page === 1}
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  >
+                    Prev
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={page >= Math.ceil(odbcRows.length / pageSize)}
+                    onClick={() =>
+                      setPage((p) => Math.min(Math.ceil(odbcRows.length / pageSize), p + 1))
+                    }
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 } 
